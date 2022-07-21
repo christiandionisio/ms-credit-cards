@@ -6,3 +6,9 @@ spring:
       uri: "mongodb+srv://mean_user:EWpWinEnfJ2nc32R@cluster0.hcqaq.mongodb.net/proyecto1db?authSource=admin&replicaSet=atlas-m2z4np-shard-0&readPreference=primary&ssl=true"
 server:
   port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
