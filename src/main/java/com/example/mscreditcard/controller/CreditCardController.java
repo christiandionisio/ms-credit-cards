@@ -43,4 +43,10 @@ public class CreditCardController {
         return service.delete(creditCardId);
     }
 
+    @GetMapping("/{id}")
+    public Mono<CreditCard> read(@PathVariable String id){
+        Mono<CreditCard> account = service.findById(id);
+        return account;
+    }
+
 }

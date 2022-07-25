@@ -9,4 +9,6 @@ public interface ICreditCardService {
     Mono<CreditCard> create(CreditCard creditCard);
     Mono<CreditCard> update(CreditCard creditCard);
     Mono<Void> delete(String creditCardId);
+
+    Mono<CreditCard> findById(String id);
 }

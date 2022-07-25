@@ -32,4 +32,9 @@ public class CreditCardServiceImpl implements ICreditCardService {
     public Mono<Void> delete(String creditCardId) {
         return repository.deleteById(creditCardId);
     }
+
+    @Override
+    public Mono<CreditCard> findById(String id) {
+        return repository.findById(id);
+    }
 }
