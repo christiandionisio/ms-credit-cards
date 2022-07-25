@@ -32,8 +32,10 @@ public class CreditCardController {
     }
 
     @PostMapping
-    public Mono<CreditCard> create(@RequestBody CreditCard creditCard) {
-        return service.create(creditCard);
+    public Mono<ResponseEntity<CreditCard>>  create(@RequestBody CreditCard creditCard) {
+        return service.create(creditCard)
+                .flatMap(c -> Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(c)))
+                .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping
