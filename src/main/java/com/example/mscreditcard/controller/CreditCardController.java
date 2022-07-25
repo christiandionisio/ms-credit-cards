@@ -1,10 +1,13 @@
 package com.example.mscreditcard.controller;
 
+import com.example.mscreditcard.dto.ResponseTemplateDTO;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.service.ICreditCardService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -48,5 +51,14 @@ public class CreditCardController {
         Mono<CreditCard> account = service.findById(id);
         return account;
     }
-
+    @GetMapping("/balance/{creditCardId}")
+    public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String creditCardId){
+        return service.getAvailableBalance(creditCardId)
+                .flatMap(balance -> {
+                    ResponseEntity<Object> response = ResponseEntity.ok().body(balance);
+                    return Mono.just(response);
+                })
+                .defaultIfEmpty(new ResponseEntity<>(new ResponseTemplateDTO(HttpStatus.NOT_FOUND,
+                        "Credit Card not found"), HttpStatus.NOT_FOUND));
+    }
 }
