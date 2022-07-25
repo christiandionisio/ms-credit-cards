@@ -2,6 +2,7 @@ package com.example.mscreditcard.service;
 
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.repo.CreditCardRepository;
+import com.example.mscreditcard.util.CreditCardBusinessRulesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,7 +21,8 @@ public class CreditCardServiceImpl implements ICreditCardService {
 
     @Override
     public Mono<CreditCard> create(CreditCard creditCard) {
-        return repository.save(creditCard);
+        return CreditCardBusinessRulesUtil.findCustomerById(creditCard.getCustomerId())
+                .flatMap(customer -> repository.save(creditCard));
     }
 
     @Override
