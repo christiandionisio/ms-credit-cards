@@ -1,5 +1,6 @@
 package com.example.mscreditcard.service;
 
+import com.example.mscreditcard.dto.BalanceDto;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.repo.CreditCardRepository;
 import com.example.mscreditcard.util.CreditCardBusinessRulesUtil;
