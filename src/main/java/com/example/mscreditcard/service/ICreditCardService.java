@@ -14,4 +14,6 @@ public interface ICreditCardService {
     Mono<CreditCard> findById(String id);
 
     Mono<BalanceDto> getAvailableBalance(String creditCardId);
+
+    Mono<Long> countCreditCardsByCustomerId(String customerId);
 }

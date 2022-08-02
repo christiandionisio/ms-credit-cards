@@ -63,4 +63,9 @@ public class CreditCardController {
                 .defaultIfEmpty(new ResponseEntity<>(new ResponseTemplateDTO(HttpStatus.NOT_FOUND,
                         "Credit Card not found"), HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("/count/{customerId}")
+    public Mono<Long> getQuantityOfCreditCardsByCustomer(@PathVariable String customerId){
+        return service.countCreditCardsByCustomerId(customerId);
+    }
 }

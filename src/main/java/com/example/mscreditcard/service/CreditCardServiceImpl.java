@@ -49,4 +49,9 @@ public class CreditCardServiceImpl implements ICreditCardService {
                     return balanceDtoMono;
                 });
     }
+
+    @Override
+    public Mono<Long> countCreditCardsByCustomerId(String customerId) {
+        return repository.countCreditCardsByCustomerId(customerId);
+    }
 }
