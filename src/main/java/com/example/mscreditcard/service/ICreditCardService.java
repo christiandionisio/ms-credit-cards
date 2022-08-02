@@ -11,4 +11,5 @@ public interface ICreditCardService {
     Mono<Void> delete(String creditCardId);
 
     Mono<CreditCard> findById(String id);
+    Flux<CreditCard> findByCustomerId(String customerId);
 }

@@ -53,4 +53,9 @@ public class CreditCardController {
         return account;
     }
 
+    @GetMapping("/findByCustomerId/{customerId}")
+    public Mono<ResponseEntity<Flux<CreditCard>>> findByCustomerId(@PathVariable String customerId){
+        return Mono.just(ResponseEntity.ok(service.findByCustomerId(customerId)));
+    }
+
 }
