@@ -52,6 +52,16 @@ public class CreditCardController {
         Mono<CreditCard> account = service.findById(id);
         return account;
     }
+    @GetMapping("/balance/{creditCardId}")
+    public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String creditCardId){
+        return service.getAvailableBalance(creditCardId)
+                .flatMap(balance -> {
+                    ResponseEntity<Object> response = ResponseEntity.ok().body(balance);
+                    return Mono.just(response);
+                })
+                .defaultIfEmpty(new ResponseEntity<>(new ResponseTemplateDTO(HttpStatus.NOT_FOUND,
+                        "Credit Card not found"), HttpStatus.NOT_FOUND));
+    }
 
     @GetMapping("/findByCustomerId/{customerId}")
     public Mono<ResponseEntity<Flux<CreditCard>>> findByCustomerId(@PathVariable String customerId){

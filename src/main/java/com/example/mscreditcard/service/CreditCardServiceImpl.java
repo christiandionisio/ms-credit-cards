@@ -39,6 +39,20 @@ public class CreditCardServiceImpl implements ICreditCardService {
     public Mono<CreditCard> findById(String id) {
         return repository.findById(id);
     }
+    @Override
+    public Mono<BalanceDto> getAvailableBalance(String creditCardId) {
+        return repository.findById(creditCardId)
+                .flatMap(creditCard -> {
+                    BalanceDto balanceDto = new BalanceDto(creditCard.getCreditLimit(), creditCard.getRemainingCredit());
+                    Mono<BalanceDto> balanceDtoMono = Mono.just(balanceDto);
+                    return balanceDtoMono;
+                });
+    }
+
+    @Override
+    public Mono<Long> countCreditCardsByCustomerId(String customerId) {
+        return repository.countCreditCardsByCustomerId(customerId);
+    }
 
     @Override
     public Flux<CreditCard> findByCustomerId(String customerId) {
