@@ -54,8 +54,7 @@ public class CreditCardServiceImpl implements CreditCardService {
         .flatMap(creditCard -> {
           BalanceDto balanceDto = new BalanceDto(creditCard.getCreditLimit(),
               creditCard.getRemainingCredit());
-          Mono<BalanceDto> balanceDtoMono = Mono.just(balanceDto);
-          return balanceDtoMono;
+          return Mono.just(balanceDto);
         });
   }
 
