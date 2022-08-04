@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Customer Dto.
+ * Credit Card document
  *
  * @author Alisson Arteaga / Christian Dionisio
  * @version 1.0
