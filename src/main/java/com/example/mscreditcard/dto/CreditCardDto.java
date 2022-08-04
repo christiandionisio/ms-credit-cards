@@ -1,26 +1,16 @@
-package com.example.mscreditcard.model;
+package com.example.mscreditcard.dto;
 
 import java.math.BigDecimal;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Customer Dto.
+ * CreditCard Dto.
  *
  * @author Alisson Arteaga / Christian Dionisio
  * @version 1.0
  */
-@Document(collection = "credit_cards")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class CreditCard {
-  @Id
+public class CreditCardDto {
   private String creditCardId;
   private String creditCardNumber;
   private String expirationDate;

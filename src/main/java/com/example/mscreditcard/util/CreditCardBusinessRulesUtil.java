@@ -14,6 +14,10 @@ import reactor.core.publisher.Mono;
  */
 public class CreditCardBusinessRulesUtil {
 
+  private CreditCardBusinessRulesUtil() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
    * Communication with ms-customer.
    *

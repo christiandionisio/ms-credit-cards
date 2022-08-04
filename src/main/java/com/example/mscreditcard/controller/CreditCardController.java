@@ -1,10 +1,13 @@
 package com.example.mscreditcard.controller;
 
+import com.example.mscreditcard.dto.CreditCardDto;
 import com.example.mscreditcard.dto.ResponseTemplateDto;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.service.CreditCardService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,8 @@ public class CreditCardController {
 
   private static final Logger logger = LogManager.getLogger(CreditCardController.class);
 
+  private ModelMapper modelMapper = new ModelMapper();
+
   /**
    * Get list of CreditCard.
    *
@@ -57,15 +62,17 @@ public class CreditCardController {
    * @version 1.0
    */
   @PostMapping
-  public Mono<ResponseEntity<CreditCard>> create(@RequestBody CreditCard creditCard) {
-    return service.create(creditCard)
+  public Mono<ResponseEntity<CreditCard>> create(@RequestBody CreditCardDto creditCardDto) {
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    return service.create(modelMapper.map(creditCardDto, CreditCard.class))
       .flatMap(c -> Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(c)))
       .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
   @PutMapping
-  public Mono<CreditCard> update(@RequestBody CreditCard creditCard) {
-    return service.update(creditCard);
+  public Mono<CreditCard> update(@RequestBody CreditCardDto creditCardDto) {
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    return service.update(modelMapper.map(creditCardDto, CreditCard.class));
   }
 
   @DeleteMapping("/{creditCardId}")
@@ -75,8 +82,7 @@ public class CreditCardController {
 
   @GetMapping("/{id}")
   public Mono<CreditCard> read(@PathVariable String id) {
-    Mono<CreditCard> account = service.findById(id);
-    return account;
+    return service.findById(id);
   }
 
   /**
