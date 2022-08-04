@@ -1,17 +1,16 @@
 package com.example.mscreditcard.dto;
 
+import java.util.Date;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-public class CustomerDTO {
-    private String customerId;
-    private String name;
-    private String lastName;
-    private String email ;
-    private String documentType;
-    private String documentNumber;
-    private Date birthDate;
-    private String customerType;
+public class CustomerDto {
+  private String customerId;
+  private String name;
+  private String lastName;
+  private String email;
+  private String documentType;
+  private String documentNumber;
+  private Date birthDate;
+  private String customerType;
 }

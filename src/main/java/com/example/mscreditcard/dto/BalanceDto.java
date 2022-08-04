@@ -1,13 +1,12 @@
 package com.example.mscreditcard.dto;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 public class BalanceDto {
-    private BigDecimal creditLimit;
-    private BigDecimal remainingCredit;
+  private BigDecimal creditLimit;
+  private BigDecimal remainingCredit;
 }
