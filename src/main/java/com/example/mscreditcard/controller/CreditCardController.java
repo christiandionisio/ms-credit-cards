@@ -19,6 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Controller layer of CreditCard.
+ *
+ * @author Alisson Arteaga / Christian Dionisio
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/credit-cards")
 public class CreditCardController {
@@ -28,6 +34,12 @@ public class CreditCardController {
 
   private static final Logger logger = LogManager.getLogger(CreditCardController.class);
 
+  /**
+   * Get list of CreditCard.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
   @GetMapping
   public Flux<CreditCard> findAll() {
     logger.debug("Debugging log");
@@ -38,6 +50,12 @@ public class CreditCardController {
     return service.findAll();
   }
 
+  /**
+   * Save a CreditCard.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
   @PostMapping
   public Mono<ResponseEntity<CreditCard>> create(@RequestBody CreditCard creditCard) {
     return service.create(creditCard)
@@ -61,6 +79,12 @@ public class CreditCardController {
     return account;
   }
 
+  /**
+   * Get available balance of a CreditCard product.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
   @GetMapping("/balance/{creditCardId}")
   public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String creditCardId) {
     return service.getAvailableBalance(creditCardId)

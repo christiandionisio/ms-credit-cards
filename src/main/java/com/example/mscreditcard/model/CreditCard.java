@@ -6,7 +6,12 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
+/**
+ * Customer Dto.
+ *
+ * @author Alisson Arteaga / Christian Dionisio
+ * @version 1.0
+ */
 @Document(collection = "credit_cards")
 @Data
 @AllArgsConstructor
