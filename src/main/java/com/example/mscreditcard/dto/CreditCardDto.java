@@ -1,6 +1,8 @@
 package com.example.mscreditcard.dto;
 
 import java.math.BigDecimal;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -10,6 +12,7 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@Builder
 public class CreditCardDto {
   private String creditCardId;
   private String creditCardNumber;
