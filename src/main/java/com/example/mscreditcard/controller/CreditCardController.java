@@ -4,12 +4,14 @@ import com.example.mscreditcard.dto.CreditCardDto;
 import com.example.mscreditcard.dto.ResponseTemplateDto;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.service.CreditCardService;
+import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,13 +48,11 @@ public class CreditCardController {
    * @version 1.0
    */
   @GetMapping
-  public Flux<CreditCard> findAll() {
-    logger.debug("Debugging log");
-    logger.info("Info log");
-    logger.warn("Hey, This is a warning!");
-    logger.error("Oops! We have an Error. OK");
-    logger.fatal("Damn! Fatal error. Please fix me.");
-    return service.findAll();
+  public Mono<ResponseEntity<Flux<CreditCard>>> findAll() {
+    return Mono.just(
+            ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .body(service.findAll()));
   }
 
   /**
@@ -65,24 +65,56 @@ public class CreditCardController {
   public Mono<ResponseEntity<CreditCard>> create(@RequestBody CreditCardDto creditCardDto) {
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     return service.create(modelMapper.map(creditCardDto, CreditCard.class))
-      .flatMap(c -> Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(c)))
-      .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            .flatMap(c -> Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(c)))
+            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 
-  @PutMapping
-  public Mono<CreditCard> update(@RequestBody CreditCardDto creditCardDto) {
-    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-    return service.update(modelMapper.map(creditCardDto, CreditCard.class));
-  }
-
-  @DeleteMapping("/{creditCardId}")
-  public Mono<Void> delete(@PathVariable String creditCardId) {
-    return service.delete(creditCardId);
-  }
-
+  /**
+   * Get detail of a creditCard by Id.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
   @GetMapping("/{id}")
-  public Mono<CreditCard> read(@PathVariable String id) {
-    return service.findById(id);
+  public Mono<ResponseEntity<CreditCard>> read(@PathVariable String id) {
+    return service.findById(id).map(creditCard -> ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .body(creditCard))
+            .defaultIfEmpty(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * Update CreditCard By Id.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
+  @PutMapping("/{id}")
+  public Mono<ResponseEntity<CreditCard>> update(@RequestBody CreditCardDto creditCardDto,
+                                             @PathVariable String id) {
+    modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    return service.findById(id)
+            .flatMap(c -> service.update(modelMapper.map(creditCardDto, CreditCard.class)))
+            .map(creditCardUpdated -> ResponseEntity
+                    .created(URI.create("/credit-cards/"
+                            .concat(creditCardUpdated.getCreditCardId())))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .body(creditCardUpdated))
+            .defaultIfEmpty(ResponseEntity.notFound().build());
+  }
+
+  /**
+   * Delete CreditCard By Id.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
+  @DeleteMapping("/{creditCardId}")
+  public Mono<ResponseEntity<Void>> delete(@PathVariable String creditCardId) {
+    return service.findById(creditCardId)
+            .flatMap(creditCard -> service.delete(creditCard.getCreditCardId())
+                    .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT))))
+            .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
   }
 
   /**
@@ -106,5 +138,4 @@ public class CreditCardController {
   public Mono<ResponseEntity<Flux<CreditCard>>> findByCustomerId(@PathVariable String customerId) {
     return Mono.just(ResponseEntity.ok(service.findByCustomerId(customerId)));
   }
-
 }
