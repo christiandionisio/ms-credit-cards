@@ -29,4 +29,5 @@ public class CreditCard {
   private BigDecimal remainingCredit;
   private String category;
   private String customerId;
+  private Boolean hasDebt;
 }
