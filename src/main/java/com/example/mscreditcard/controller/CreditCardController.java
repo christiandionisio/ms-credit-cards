@@ -132,6 +132,12 @@ public class CreditCardController {
     return Mono.just(ResponseEntity.ok(service.findByCustomerId(customerId)));
   }
 
+  /**
+   * Get credit cards with overdue debt by customer ID.
+   *
+   * @author Alisson Arteaga / Christian Dionisio
+   * @version 1.0
+   */
   @GetMapping("/creditCardsWithOverdueDebt")
     public Mono<ResponseEntity<Flux<CreditCard>>> findCreditCardsWithOverdueDebt(
             @RequestParam String customerId, @RequestParam Boolean hasDebt) {

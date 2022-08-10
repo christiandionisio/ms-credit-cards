@@ -154,4 +154,18 @@ public class CreditCardControllerTest {
               Assertions.assertThat(creditCardList.size() > 0).isTrue();
             });
   }
+
+  @Test
+  @DisplayName("Get creditCards of a Customer")
+    void findCreditCardsWithOverdueDebtTest() {
+      Mockito.when(creditCardService.findCreditCardByCustomerIdAndHasDebt(Mockito.anyString(), Mockito.anyBoolean()))
+              .thenReturn(Flux.fromIterable(CreditCardProvider.getCreditCardList()));
+
+      webClient.get().uri("/credit-cards/creditCardsWithOverdueDebt?customerId=" +
+                      "62e8bb6cfaf5b87c8030047c&hasDebt=true")
+              .exchange()
+              .expectStatus().isOk()
+              .expectBodyList(CreditCard.class)
+              .hasSize(1);
+  }
 }
