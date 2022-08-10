@@ -28,4 +28,6 @@ public interface CreditCardService {
   Mono<Long> countCreditCardsByCustomerId(String customerId);
 
   Flux<CreditCard> findByCustomerId(String customerId);
+
+  Flux<CreditCard> findCreditCardByCustomerIdAndHasDebt(String customerId, Boolean hasDebt);
 }

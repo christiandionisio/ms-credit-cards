@@ -22,4 +22,5 @@ public class CreditCardDto {
   private BigDecimal remainingCredit;
   private String category;
   private String customerId;
+  private boolean hasDebt;
 }

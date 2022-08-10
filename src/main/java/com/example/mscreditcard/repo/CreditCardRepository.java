@@ -17,4 +17,6 @@ public interface CreditCardRepository extends ReactiveMongoRepository<CreditCard
   Mono<Long> countCreditCardsByCustomerId(String customerId);
 
   Flux<CreditCard> findByCustomerId(String customerId);
+
+  Flux<CreditCard> findCreditCardByCustomerIdAndHasDebt(String customerId, boolean hasDebt);
 }
