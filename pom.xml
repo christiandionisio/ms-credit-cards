@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>ms-credit-card</artifactId>
+    <artifactId>ms-card</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ms-credit-card</name>
-    <description>ms-credit-card</description>
+    <name>ms-card</name>
+    <description>ms-card</description>
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>

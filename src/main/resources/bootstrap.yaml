@@ -1,13 +1,20 @@
 spring:
   application:
-    name: ms-credit-cards
+    name: ms-cards
   data:
     mongodb:
       uri: "mongodb+srv://mean_user:EWpWinEnfJ2nc32R@cluster0.hcqaq.mongodb.net/proyecto1db?authSource=admin&replicaSet=atlas-m2z4np-shard-0&readPreference=primary&ssl=true"
   cloud:
     config:
-      name: ms-credit-cards
+      name: ms-cards
       uri: http://localhost:8081
 
 server:
   port: 8084
+
+customer:
+  service:
+    uri: "http://localhost:8082/customers/"
+credit:
+  service:
+    uri: "http://localhost:8085/credits/"
