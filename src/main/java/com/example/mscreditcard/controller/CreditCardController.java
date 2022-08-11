@@ -2,6 +2,7 @@ package com.example.mscreditcard.controller;
 
 import com.example.mscreditcard.dto.CreditCardDto;
 import com.example.mscreditcard.dto.ResponseTemplateDto;
+import com.example.mscreditcard.error.CustomerHasCreditDebtException;
 import com.example.mscreditcard.error.CustomerHasDebtException;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.service.CreditCardService;
@@ -61,7 +62,8 @@ public class CreditCardController {
     return service.create(modelMapper.map(creditCardDto, CreditCard.class))
             .flatMap(c -> Mono.just(new ResponseEntity<>(HttpStatus.NO_CONTENT)))
             .onErrorResume(e -> {
-              if (e instanceof CustomerHasDebtException) {
+              if (e instanceof CustomerHasDebtException
+                      || e instanceof CustomerHasCreditDebtException) {
                 logger.error(e.getMessage());
                 return Mono.just(new ResponseEntity<>(new ResponseTemplateDto(null,
                         e.getMessage()), HttpStatus.FORBIDDEN));

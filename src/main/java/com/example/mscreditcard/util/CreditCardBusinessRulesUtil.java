@@ -1,9 +1,14 @@
 package com.example.mscreditcard.util;
 
+import com.example.mscreditcard.dto.CreditDto;
 import com.example.mscreditcard.dto.CustomerDto;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -30,6 +35,16 @@ public class CreditCardBusinessRulesUtil {
         .accept(MediaType.APPLICATION_JSON)
         .retrieve()
         .bodyToMono(CustomerDto.class);
+  }
+
+  public static Flux<CreditDto> findCreditWithOverdueDebt(String idCustomer) {
+    return WebClient.create().get()
+        .uri("http://localhost:9085/credits/creditWithOverdueDebt?" +
+                "customerId=" + idCustomer + "&date=" +
+                LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .accept(MediaType.APPLICATION_JSON)
+        .retrieve()
+        .bodyToFlux(CreditDto.class);
   }
 
 }
