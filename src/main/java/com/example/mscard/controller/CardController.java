@@ -157,4 +157,9 @@ public class CardController {
                 ResponseEntity.ok(
                         service.findCreditCardByCustomerIdAndHasDebt(customerId, hasDebt)));
     }
+
+  @GetMapping("/count/{customerId}")
+  public Mono<Long> getQuantityOfCreditCardsByCustomer(@PathVariable String customerId){
+    return service.countCreditCardsByCustomerId(customerId);
+  }
 }
