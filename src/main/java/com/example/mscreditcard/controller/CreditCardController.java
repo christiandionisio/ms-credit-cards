@@ -2,6 +2,7 @@ package com.example.mscreditcard.controller;
 
 import com.example.mscreditcard.dto.CreditCardDto;
 import com.example.mscreditcard.dto.ResponseTemplateDto;
+import com.example.mscreditcard.error.CustomerHasDebtException;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.service.CreditCardService;
 import java.net.URI;
@@ -55,10 +56,19 @@ public class CreditCardController {
    * @version 1.0
    */
   @PostMapping
-  public Mono<ResponseEntity<CreditCard>> create(@RequestBody CreditCardDto creditCardDto) {
+  public Mono<ResponseEntity<Object>> create(@RequestBody CreditCardDto creditCardDto) {
     modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     return service.create(modelMapper.map(creditCardDto, CreditCard.class))
-            .flatMap(c -> Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(c)))
+            .flatMap(c -> Mono.just(new ResponseEntity<>(HttpStatus.NO_CONTENT)))
+            .onErrorResume(e -> {
+              if (e instanceof CustomerHasDebtException) {
+                logger.error(e.getMessage());
+                return Mono.just(new ResponseEntity<>(new ResponseTemplateDto(null,
+                        e.getMessage()), HttpStatus.FORBIDDEN));
+              }
+              logger.error(e.getMessage());
+              return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+            })
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
   }
 

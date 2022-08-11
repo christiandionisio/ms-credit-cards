@@ -1,6 +1,7 @@
 package com.example.mscreditcard.service;
 
 import com.example.mscreditcard.dto.BalanceDto;
+import com.example.mscreditcard.error.CustomerHasDebtException;
 import com.example.mscreditcard.model.CreditCard;
 import com.example.mscreditcard.repo.CreditCardRepository;
 import com.example.mscreditcard.util.CreditCardBusinessRulesUtil;
@@ -30,7 +31,7 @@ public class CreditCardServiceImpl implements CreditCardService {
   @Override
   public Mono<CreditCard> create(CreditCard creditCard) {
     return CreditCardBusinessRulesUtil.findCustomerById(creditCard.getCustomerId())
-        .flatMap(customer -> repository.save(creditCard));
+        .flatMap(customer -> saveIfCustomerNotHaveDebt(creditCard));
   }
 
   @Override
@@ -71,5 +72,13 @@ public class CreditCardServiceImpl implements CreditCardService {
   @Override
   public Flux<CreditCard> findCreditCardByCustomerIdAndHasDebt(String customerId, Boolean hasDebt) {
     return repository.findCreditCardByCustomerIdAndHasDebt(customerId, hasDebt);
+  }
+
+  private Mono<CreditCard> saveIfCustomerNotHaveDebt(CreditCard creditCard) {
+    return repository.findCreditCardByCustomerIdAndHasDebt(creditCard.getCustomerId(), true)
+            .hasElements()
+            .flatMap(hasDebt -> Boolean.TRUE.equals((hasDebt))
+                    ? Mono.error(new CustomerHasDebtException())
+                    : repository.save(creditCard));
   }
 }
