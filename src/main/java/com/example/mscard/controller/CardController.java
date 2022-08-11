@@ -16,9 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+
 
 /**
  * Controller layer of Card.
@@ -102,8 +112,7 @@ public class CardController {
     return service.findById(id)
             .flatMap(c -> service.update(modelMapper.map(cardDto, Card.class)))
             .map(creditCardUpdated -> ResponseEntity
-                    .created(URI.create("/cards/"
-                            .concat(creditCardUpdated.getCardId())))
+                    .created(URI.create("/cards/".concat(creditCardUpdated.getCardId())))
                     .contentType(MediaType.APPLICATION_JSON_UTF8)
                     .body(creditCardUpdated))
             .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -132,12 +141,12 @@ public class CardController {
   @GetMapping("/balance/{creditCardId}")
   public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String creditCardId) {
     return service.getAvailableBalance(creditCardId)
-      .flatMap(balance -> {
-        ResponseEntity<Object> response = ResponseEntity.ok().body(balance);
-        return Mono.just(response);
-      })
-      .defaultIfEmpty(new ResponseEntity<>(new ResponseTemplateDto(HttpStatus.NOT_FOUND,
-        "Card not found"), HttpStatus.NOT_FOUND));
+            .flatMap(balance -> {
+              ResponseEntity<Object> response = ResponseEntity.ok().body(balance);
+              return Mono.just(response);
+            })
+            .defaultIfEmpty(new ResponseEntity<>(new ResponseTemplateDto(HttpStatus.NOT_FOUND,
+                    "Card not found"), HttpStatus.NOT_FOUND));
   }
 
   @GetMapping("/findByCustomerId/{customerId}")
@@ -152,28 +161,29 @@ public class CardController {
    * @version 1.0
    */
   @GetMapping("/creditCardsWithOverdueDebt")
-    public Mono<ResponseEntity<Flux<Card>>> findCreditCardsWithOverdueDebt(
-            @RequestParam String customerId, @RequestParam Boolean hasDebt) {
-        return Mono.just(
-                ResponseEntity.ok(
-                        service.findCreditCardByCustomerIdAndHasDebt(customerId, hasDebt)));
-    }
+  public Mono<ResponseEntity<Flux<Card>>> findCreditCardsWithOverdueDebt(
+          @RequestParam String customerId, @RequestParam Boolean hasDebt) {
+    return Mono.just(
+            ResponseEntity.ok(
+                    service.findCreditCardByCustomerIdAndHasDebt(customerId, hasDebt)));
+  }
 
   @GetMapping("/count/{customerId}")
-  public Mono<Long> getQuantityOfCreditCardsByCustomer(@PathVariable String customerId){
+  public Mono<Long> getQuantityOfCreditCardsByCustomer(@PathVariable String customerId) {
     return service.countCreditCardsByCustomerId(customerId);
   }
 
   /**
-   *  Associate a debit card with accounts
+   * Associate a debit card with main account and secondaries accounts.
    *
    * @author Alisson Arteaga
    * @version 1.0
    */
   @PostMapping("/debit/associate")
-  public Mono<ResponseEntity<Object>> associateDebitCardWithAccounts(@RequestBody CardAssociateDto cardAssociateDto) {
+  public Mono<ResponseEntity<Object>> associateDebitCard(
+          @RequestBody CardAssociateDto cardAssociateDto) {
     return service.associateDebitCardWithAccounts(cardAssociateDto)
             .flatMap(c -> Mono.just(ResponseEntity.ok().build()))
-            .onErrorResume(e ->  Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+            .onErrorResume(e -> Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
   }
 }
