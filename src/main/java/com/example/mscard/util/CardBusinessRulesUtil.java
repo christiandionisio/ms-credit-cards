@@ -4,6 +4,7 @@ import com.example.mscard.dto.CreditDto;
 import com.example.mscard.dto.CustomerDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,16 +19,16 @@ import java.time.format.DateTimeFormatter;
  * @author Alisson Arteaga / Christian Dionisio
  * @version 1.0
  */
+@Component
 public class CardBusinessRulesUtil {
 
   @Value("${customer.service.uri}")
-  public static String uriCustomerService;
+  private String uriCustomerService;
 
   @Value("${credit.service.uri}")
-  public static String uriCreditService;
+  private String uriCreditService;
 
   private CardBusinessRulesUtil() {
-    throw new IllegalStateException("Utility class");
   }
 
   /**
@@ -36,17 +37,18 @@ public class CardBusinessRulesUtil {
    * @author Alisson Arteaga / Christian Dionisio
    * @version 1.0
    */
-  public static Mono<CustomerDto> findCustomerById(String id) {
+  public Mono<CustomerDto> findCustomerById(String id) {
+    System.out.println("Pintando la variable de entorno: " + uriCustomerService);
     return WebClient.create().get()
-        .uri("http://localhost:8082/customers/" + id)
+        .uri(uriCustomerService + id)
         .accept(MediaType.APPLICATION_JSON_UTF8)
         .retrieve()
         .bodyToMono(CustomerDto.class);
   }
 
-  public static Flux<CreditDto> findCreditWithOverdueDebt(String idCustomer) {
+  public Flux<CreditDto> findCreditWithOverdueDebt(String idCustomer) {
     return WebClient.create().get()
-        .uri("http://localhost:8085/credits/" + "creditWithOverdueDebt?" +
+        .uri(uriCreditService + "creditWithOverdueDebt?" +
                 "customerId=" + idCustomer + "&date=" +
                 LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
         .accept(MediaType.APPLICATION_JSON)

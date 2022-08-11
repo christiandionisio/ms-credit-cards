@@ -24,6 +24,9 @@ public class CardServiceImpl implements CardService {
   @Autowired
   private CardRepository repository;
 
+  @Autowired
+  private CardBusinessRulesUtil cardBusinessRulesUtil;
+
   @Override
   public Flux<Card> findAll() {
     return repository.findAll();
@@ -31,9 +34,7 @@ public class CardServiceImpl implements CardService {
 
   @Override
   public Mono<Card> create(Card creditCard) {
-    System.out.println("CreditCard received: " + creditCard);
-    return CardBusinessRulesUtil.findCustomerById(creditCard.getCustomerId())
-            .doOnNext(customer -> System.out.println("Customer id obtenido: " + customer.getCustomerId()))
+    return cardBusinessRulesUtil.findCustomerById(creditCard.getCustomerId())
             .flatMap(customer -> hasDebtInCreditByCustomerId(creditCard.getCustomerId()))
             .flatMap(noHasDebts -> saveIfCustomerNotHaveDebt(creditCard));
   }
@@ -79,7 +80,7 @@ public class CardServiceImpl implements CardService {
   }
 
   private Mono<Boolean> hasDebtInCreditByCustomerId(String customerId) {
-    return CardBusinessRulesUtil.findCreditWithOverdueDebt(customerId)
+    return cardBusinessRulesUtil.findCreditWithOverdueDebt(customerId)
         .hasElements()
             .flatMap(hasDebt -> Boolean.TRUE.equals(hasDebt)
                     ? Mono.error(new CustomerHasCreditDebtException())
