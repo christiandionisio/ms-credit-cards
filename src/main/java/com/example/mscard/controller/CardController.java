@@ -1,5 +1,6 @@
 package com.example.mscard.controller;
 
+import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.dto.CardDto;
 import com.example.mscard.dto.ResponseTemplateDto;
 import com.example.mscard.error.CustomerHasCreditDebtException;
@@ -161,5 +162,18 @@ public class CardController {
   @GetMapping("/count/{customerId}")
   public Mono<Long> getQuantityOfCreditCardsByCustomer(@PathVariable String customerId){
     return service.countCreditCardsByCustomerId(customerId);
+  }
+
+  /**
+   *  Associate a debit card with accounts
+   *
+   * @author Alisson Arteaga
+   * @version 1.0
+   */
+  @PostMapping("/debit/associate")
+  public Mono<ResponseEntity<Object>> associateDebitCardWithAccounts(@RequestBody CardAssociateDto cardAssociateDto) {
+    return service.associateDebitCardWithAccounts(cardAssociateDto)
+            .flatMap(c -> Mono.just(ResponseEntity.ok().build()))
+            .onErrorResume(e ->  Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
   }
 }

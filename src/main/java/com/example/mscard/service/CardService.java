@@ -1,6 +1,7 @@
 package com.example.mscard.service;
 
 import com.example.mscard.dto.BalanceDto;
+import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.model.Card;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,4 +31,7 @@ public interface CardService {
   Flux<Card> findByCustomerId(String customerId);
 
   Flux<Card> findCreditCardByCustomerIdAndHasDebt(String customerId, Boolean hasDebt);
+
+  Mono<Void> associateDebitCardWithAccounts(CardAssociateDto cardAssociateDto);
+
 }

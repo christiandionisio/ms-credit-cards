@@ -19,4 +19,7 @@ public interface CardRepository extends ReactiveMongoRepository<Card, String> {
   Flux<Card> findByCustomerId(String customerId);
 
   Flux<Card> findCreditCardByCustomerIdAndHasDebt(String customerId, boolean hasDebt);
+
+  Mono<Card> findCardByCustomerIdAndCardIdAndCardType(String customerId, String cardDebitId, String cardType);
+
 }
