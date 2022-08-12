@@ -1,7 +1,8 @@
 package com.example.mscard.service;
 
 import com.example.mscard.dto.AccountDto;
-import com.example.mscard.dto.BalanceDto;
+import com.example.mscard.dto.BalanceCreditCardDto;
+import com.example.mscard.dto.BalanceDebitCardDto;
 import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.enums.TypeEnum;
 import com.example.mscard.error.CustomerHasCreditDebtException;
@@ -38,10 +39,10 @@ public class CardServiceImpl implements CardService {
   }
 
   @Override
-  public Mono<Card> create(Card creditCard) {
-    return cardBusinessRulesUtil.findCustomerById(creditCard.getCustomerId())
-            .flatMap(customer -> hasDebtInCreditByCustomerId(creditCard.getCustomerId()))
-            .flatMap(noHasDebts -> saveIfCustomerNotHaveDebt(creditCard));
+  public Mono<Card> create(Card card) {
+    return cardBusinessRulesUtil.findCustomerById(card.getCustomerId())
+            .flatMap(customer -> hasDebtInCreditByCustomerId(card.getCustomerId()))
+            .flatMap(noHasDebts -> saveIfCustomerNotHaveDebt(card));
   }
 
   @Override
@@ -60,18 +61,29 @@ public class CardServiceImpl implements CardService {
   }
 
   @Override
-  public Mono<BalanceDto> getAvailableBalance(String creditCardId) {
-    return repository.findById(creditCardId)
-            .flatMap(creditCard -> {
-              BalanceDto balanceDto = new BalanceDto(creditCard.getCreditLimit(),
-                      creditCard.getRemainingCredit());
-              return Mono.just(balanceDto);
+  public Mono<Object> getAvailableBalance(String cardId) {
+    return repository.findById(cardId)
+            .flatMap(card -> {
+              //if is creditCard
+              if(card.getCardType().equals(TypeEnum.CREDIT_CARD.getValue())){
+                BalanceCreditCardDto balanceDto = new BalanceCreditCardDto(card.getCreditLimit(),
+                        card.getRemainingCredit());
+                return Mono.just(balanceDto);
+              }else{
+                //if is debitCard
+                String mainAccountId = card.getMainAccountId();
+                return cardBusinessRulesUtil.findAccountByCustomerIdAndAccountId(card.getCustomerId(), mainAccountId)
+                        .flatMap(accountDto -> {
+                          BalanceDebitCardDto balanceDto = new BalanceDebitCardDto(accountDto.getBalance());
+                          return Mono.just(balanceDto);
+                        });
+              }
             });
   }
 
   @Override
   public Mono<Long> countCreditCardsByCustomerId(String customerId) {
-    return repository.countCreditCardsByCustomerId(customerId);
+    return repository.countCardsByCustomerId(customerId);
   }
 
   @Override
@@ -81,7 +93,7 @@ public class CardServiceImpl implements CardService {
 
   @Override
   public Flux<Card> findCreditCardByCustomerIdAndHasDebt(String customerId, Boolean hasDebt) {
-    return repository.findCreditCardByCustomerIdAndHasDebt(customerId, hasDebt);
+    return repository.findCardByCustomerIdAndHasDebt(customerId, hasDebt);
   }
 
   private Mono<Boolean> hasDebtInCreditByCustomerId(String customerId) {
@@ -93,7 +105,7 @@ public class CardServiceImpl implements CardService {
   }
 
   private Mono<Card> saveIfCustomerNotHaveDebt(Card creditCard) {
-    return repository.findCreditCardByCustomerIdAndHasDebt(creditCard.getCustomerId(), true)
+    return repository.findCardByCustomerIdAndHasDebt(creditCard.getCustomerId(), true)
             .hasElements()
             .flatMap(hasDebt -> Boolean.TRUE.equals((hasDebt))
                     ? Mono.error(new CustomerHasDebtException())
@@ -128,5 +140,10 @@ public class CardServiceImpl implements CardService {
               System.out.println("Account updated: " + accountDto);
               return cardBusinessRulesUtil.updateAccount(accountDto);
             });
+  }
+
+  @Override
+  public Mono<Card> findByCustomerIdAndDebitCardId(String customerId, String debitCardId) {
+    return repository.findCardByCustomerIdAndCardIdAndCardType(customerId, debitCardId, TypeEnum.DEBIT_CARD.getValue());
   }
 }

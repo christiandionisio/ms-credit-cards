@@ -1,6 +1,5 @@
 package com.example.mscard.service;
 
-import com.example.mscard.dto.BalanceDto;
 import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.model.Card;
 import reactor.core.publisher.Flux;
@@ -24,7 +23,7 @@ public interface CardService {
 
   Mono<Card> findById(String id);
 
-  Mono<BalanceDto> getAvailableBalance(String creditCardId);
+  Mono<Object> getAvailableBalance(String creditCardId);
 
   Mono<Long> countCreditCardsByCustomerId(String customerId);
 
@@ -34,4 +33,5 @@ public interface CardService {
 
   Mono<Void> associateDebitCardWithAccounts(CardAssociateDto cardAssociateDto);
 
+  Mono<Card> findByCustomerIdAndDebitCardId(String customerId, String debitCardId);
 }

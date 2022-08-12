@@ -20,7 +20,7 @@ class CardServiceImplTest {
 
     @Test
     void findCreditCardByCustomerIdAndHasDebt() {
-        Mockito.when(repository.findCreditCardByCustomerIdAndHasDebt(Mockito.anyString(), Mockito.anyBoolean()))
+        Mockito.when(repository.findCardByCustomerIdAndHasDebt(Mockito.anyString(), Mockito.anyBoolean()))
             .thenReturn(Flux.empty());
 
         StepVerifier.create(service.findCreditCardByCustomerIdAndHasDebt("1", true))

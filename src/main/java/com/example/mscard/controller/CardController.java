@@ -133,14 +133,14 @@ public class CardController {
   }
 
   /**
-   * Get available balance of a CreditCard product.
+   * Get available balance of a CARD(Credit or debit) product.
    *
    * @author Alisson Arteaga / Christian Dionisio
    * @version 1.0
    */
-  @GetMapping("/balance/{creditCardId}")
-  public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String creditCardId) {
-    return service.getAvailableBalance(creditCardId)
+  @GetMapping("/balance/{cardId}")
+  public Mono<ResponseEntity<Object>> getBalanceAvailable(@PathVariable String cardId) {
+    return service.getAvailableBalance(cardId)
             .flatMap(balance -> {
               ResponseEntity<Object> response = ResponseEntity.ok().body(balance);
               return Mono.just(response);
@@ -185,5 +185,10 @@ public class CardController {
     return service.associateDebitCardWithAccounts(cardAssociateDto)
             .flatMap(c -> Mono.just(ResponseEntity.ok().build()))
             .onErrorResume(e -> Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
+  }
+
+  @GetMapping("/findByCustomerIdAndDebitCardId")
+  public Mono<ResponseEntity<Mono<Card>>> findByCustomerIdAndDebitCardId(@RequestParam String customerId, @RequestParam String debitCardId) {
+    return Mono.just(ResponseEntity.ok(service.findByCustomerIdAndDebitCardId(customerId, debitCardId)));
   }
 }

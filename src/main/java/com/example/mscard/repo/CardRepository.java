@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono;
  */
 public interface CardRepository extends ReactiveMongoRepository<Card, String> {
 
-  Mono<Long> countCreditCardsByCustomerId(String customerId);
+  Mono<Long> countCardsByCustomerId(String customerId);
 
   Flux<Card> findByCustomerId(String customerId);
 
-  Flux<Card> findCreditCardByCustomerIdAndHasDebt(String customerId, boolean hasDebt);
+  Flux<Card> findCardByCustomerIdAndHasDebt(String customerId, boolean hasDebt);
 
   Mono<Card> findCardByCustomerIdAndCardIdAndCardType(String customerId, String cardDebitId, String cardType);
 

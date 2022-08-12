@@ -13,10 +13,9 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class BalanceDto {
+public class BalanceCreditCardDto {
 
   private BigDecimal creditLimit;
 
   private BigDecimal remainingCredit;
-
 }

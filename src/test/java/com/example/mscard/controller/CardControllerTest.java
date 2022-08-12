@@ -1,6 +1,6 @@
 package com.example.mscard.controller;
 
-import com.example.mscard.dto.BalanceDto;
+import com.example.mscard.dto.BalanceCreditCardDto;
 import com.example.mscard.dto.CardDto;
 import com.example.mscard.model.Card;
 import com.example.mscard.provider.CardProvider;
@@ -66,7 +66,7 @@ public class CardControllerTest {
     webClient.post().uri("/cards")
             .body(Mono.just(CardProvider.getCardDto()), CardDto.class)
             .exchange()
-            .expectStatus().isCreated();
+            .expectStatus().isNoContent();
   }
 
   @Test
@@ -120,16 +120,16 @@ public class CardControllerTest {
   @DisplayName("Get balance of a creditCard Product")
   void getBalanceAvailable() {
     Mockito.when(creditCardService.getAvailableBalance(Mockito.anyString()))
-            .thenReturn(Mono.just(new BalanceDto(BigDecimal.valueOf(5000), BigDecimal.valueOf(450.34))));
+            .thenReturn(Mono.just(new BalanceCreditCardDto(BigDecimal.valueOf(5000), BigDecimal.valueOf(450.34))));
 
     webClient.get().uri("/cards/balance/1")
             .accept(MediaType.APPLICATION_JSON_UTF8)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
-            .expectBody(BalanceDto.class)
+            .expectBody(BalanceCreditCardDto.class)
             .consumeWith(response -> {
-              BalanceDto balanceDto = response.getResponseBody();
+              BalanceCreditCardDto balanceDto = response.getResponseBody();
               Assertions.assertThat(balanceDto.getCreditLimit()).isEqualTo(CardProvider.getCard().getCreditLimit());
             });
   }
