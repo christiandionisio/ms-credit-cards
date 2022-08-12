@@ -1,6 +1,7 @@
 package com.example.mscard.controller;
 
 import com.example.mscard.dto.BalanceCreditCardDto;
+import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.dto.CardDto;
 import com.example.mscard.model.Card;
 import com.example.mscard.provider.CardProvider;
@@ -167,5 +168,41 @@ public class CardControllerTest {
             .expectStatus().isOk()
             .expectBodyList(Card.class)
             .hasSize(1);
+  }
+
+  @Test
+  @DisplayName("Count quantity of credit cards by customerId")
+  void getQuantityOfCreditCardsByCustomer() {
+    Mockito.when(creditCardService.countCreditCardsByCustomerId(Mockito.anyString()))
+            .thenReturn(Mono.just(Long.valueOf(1)));
+
+    webClient.get().uri("/cards/count/1")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(Long.class);
+  }
+
+  @Test
+  @DisplayName("Associate a debit card with main account and secondaries accounts")
+  void associateDebitCard() {
+    Mockito.when(creditCardService.associateDebitCardWithAccounts(Mockito.any()))
+            .thenReturn(Mono.empty());
+
+    webClient.post().uri("/cards/debit/associate")
+            .body(Mono.just(CardProvider.getCardAssociateDto()), CardAssociateDto.class)
+            .exchange()
+            .expectStatus().isOk();
+  }
+
+  @Test
+  @DisplayName("Get Debit Card of a customer")
+  void findByCustomerIdAndDebitCardId() {
+    Mockito.when(creditCardService.findByCustomerIdAndDebitCardId(Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(Mono.just(CardProvider.getCard()));
+
+    webClient.get().uri("/cards/findByCustomerIdAndDebitCardId?customerId=1&debitCardId=2")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(Card.class);
   }
 }

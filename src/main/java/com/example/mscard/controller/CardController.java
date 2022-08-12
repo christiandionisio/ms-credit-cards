@@ -187,6 +187,12 @@ public class CardController {
             .onErrorResume(e -> Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR)));
   }
 
+  /**
+   * Get Debit Card of a customer.
+   *
+   * @author Alisson Arteaga
+   * @version 1.0
+   */
   @GetMapping("/findByCustomerIdAndDebitCardId")
   public Mono<ResponseEntity<Mono<Card>>> findByCustomerIdAndDebitCardId(@RequestParam String customerId, @RequestParam String debitCardId) {
     return Mono.just(ResponseEntity.ok(service.findByCustomerIdAndDebitCardId(customerId, debitCardId)));

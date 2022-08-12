@@ -1,5 +1,7 @@
 package com.example.mscard.provider;
 
+import com.example.mscard.dto.AccountDto;
+import com.example.mscard.dto.CardAssociateDto;
 import com.example.mscard.dto.CardDto;
 import com.example.mscard.enums.CategoryEnum;
 import com.example.mscard.enums.TypeEnum;
@@ -48,4 +50,28 @@ public class CardProvider {
             .customerId("1")
             .build();
   }
+
+  public static CardAssociateDto getCardAssociateDto() {
+    List<String> accountIdList = new ArrayList<>();
+    accountIdList.add("1");
+    accountIdList.add("2");
+
+    return CardAssociateDto.builder()
+            .cardId("1")
+            .customerId("1")
+            .mainAccountId("1")
+            .accountIdList(accountIdList)
+            .build();
+  }
+
+  public static AccountDto getAccountDto() {
+    return AccountDto.builder()
+            .accountId("1")
+            .accountType("CORRIENTE")
+            .balance(BigDecimal.valueOf(1000))
+            .customerOwnerId("1")
+            .customerOwnerType("PERSONAL")
+            .build();
+  }
+
 }
