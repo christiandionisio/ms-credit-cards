@@ -2,6 +2,9 @@ package com.example.mscard.controller;
 
 import com.example.mscard.dto.BalanceCreditCardDto;
 import com.example.mscard.dto.CardDto;
+import com.example.mscard.dto.ResponseTemplateDto;
+import com.example.mscard.error.CustomerHasCreditDebtException;
+import com.example.mscard.error.CustomerHasDebtException;
 import com.example.mscard.model.Card;
 import com.example.mscard.provider.CardProvider;
 import com.example.mscard.service.CardService;
@@ -68,6 +71,48 @@ public class CardControllerTest {
             .exchange()
             .expectStatus().isNoContent();
   }
+
+    @Test
+    @DisplayName("Create Card with CustomerHasDebtException")
+    void createWithCustomerHasDebtExceptionTest() {
+        Mockito.when(creditCardService.create(Mockito.any(Card.class)))
+                .thenReturn(Mono.error(new CustomerHasDebtException()));
+
+        webClient.post().uri("/cards")
+                .body(Mono.just(CardProvider.getCardDto()), CardDto.class)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ResponseTemplateDto.class);
+
+    }
+
+    @Test
+    @DisplayName("Create Card with CustomerHasCreditDebtException")
+    void createWithCustomerHasCreditDebtExceptionTest() {
+        Mockito.when(creditCardService.create(Mockito.any(Card.class)))
+                .thenReturn(Mono.error(new CustomerHasCreditDebtException()));
+
+        webClient.post().uri("/cards")
+                .body(Mono.just(CardProvider.getCardDto()), CardDto.class)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ResponseTemplateDto.class);
+
+    }
+
+    @Test
+    @DisplayName("Create Card with GeneralException")
+    void createWithGeneralExceptionTest() {
+        Mockito.when(creditCardService.create(Mockito.any(Card.class)))
+                .thenReturn(Mono.error(new Exception()));
+
+        webClient.post().uri("/cards")
+                .body(Mono.just(CardProvider.getCardDto()), CardDto.class)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(ResponseTemplateDto.class);
+
+    }
 
   @Test
   @DisplayName("Read Card")
